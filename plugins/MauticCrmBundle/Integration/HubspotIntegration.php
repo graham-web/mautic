@@ -613,7 +613,12 @@ class HubspotIntegration extends CrmAbstractIntegration
         }
 
         if ($this->isAuthorized()) {
-            $leadData = $this->getApiHelper()->createLead($mappedData, $lead);
+            try {
+                $leadData = $this->getApiHelper()->createLead($mappedData, $lead);
+            } catch (\Exception $e) {
+                $this->logIntegrationError($e);
+                return false;
+            }
 
             if (!empty($leadData['vid'])) {
                 /** @var IntegrationEntityRepository $integrationEntityRepo */
